@@ -1,0 +1,3 @@
+[submodule "jsmotion-studio"]
+	path = jsmotion-studio
+	url = https://github.com/franklindrw/jsmotion-studio.git
