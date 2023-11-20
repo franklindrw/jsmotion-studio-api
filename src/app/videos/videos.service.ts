@@ -7,6 +7,10 @@ import { VideoRepository } from './videos.repository';
 export class VideoService {
   constructor(private readonly videoRepo: VideoRepository) {}
 
+  async getVideos(): Promise<VideoDto[]> {
+    return this.videoRepo.findAll();
+  }
+
   async createVideo(data: CreateVideoDto): Promise<VideoDto> {
     const { title, description, category, url } = data;
 

@@ -3,7 +3,7 @@ import { VideoRepository } from '../videos.repository';
 import { Test } from '@nestjs/testing';
 import { CreateVideoDto } from '../dtos/create-video.dto';
 
-describe('VideoRepository', () => {
+describe('CreateVideoRepository', () => {
   let repo: VideoRepository;
   let prisma: PrismaService;
 
@@ -55,5 +55,55 @@ describe('VideoRepository', () => {
   it('should throw an error when create method fails', async () => {
     (prisma.videos.create as jest.Mock).mockRejectedValue(new Error());
     await expect(repo.create(data)).rejects.toThrow(); // compara se o método lançou um erro
+  });
+});
+
+describe('GetVideosRepository', () => {
+  let videosRepo: VideoRepository;
+
+  beforeEach(() => {
+    videosRepo = new VideoRepository({} as PrismaService);
+    jest
+      .spyOn(videosRepo, 'findAll')
+      .mockImplementation(() => Promise.resolve([]));
+  });
+
+  it('should call findAll method', async () => {
+    videosRepo.findAll = jest.fn();
+    await videosRepo.findAll();
+    expect(videosRepo.findAll).toHaveBeenCalled(); // compara se o método foi chamado
+  });
+
+  it('should return an empty array when there are no videos', async () => {
+    (videosRepo.findAll as jest.Mock).mockResolvedValue([]);
+    const videos = await videosRepo.findAll();
+    expect(videos).toEqual([]); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should return an array of videos', async () => {
+    const videos = [
+      {
+        id: 1,
+        title: 'test title',
+        description: 'video test description data',
+        category: 'test category',
+        url: 'https://www.test.com/video-test-data',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+      {
+        id: 2,
+        title: 'test title 2',
+        description: 'video test description data 2',
+        category: 'test category 2',
+        url: 'https://www.test.com/video-test-data-2',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+    ];
+
+    (videosRepo.findAll as jest.Mock).mockResolvedValue(videos);
+    const returnedVideos = await videosRepo.findAll();
+    expect(returnedVideos).toEqual(videos); // compara se o valor retornado é igual ao valor esperado
   });
 });

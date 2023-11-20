@@ -3,7 +3,7 @@ import { VideoRepository } from '../videos.repository';
 import { VideoService } from '../videos.service';
 import { CreateVideoDto } from '../dtos/create-video.dto';
 
-describe('VideosService', () => {
+describe('CreateVideosService', () => {
   let service: VideoService;
   let repo: jest.Mocked<VideoRepository>;
 
@@ -76,5 +76,59 @@ describe('VideosService', () => {
     repo.create.mockRejectedValue(new Error('Repository error'));
 
     await expect(service.createVideo(data)).rejects.toThrow('Repository error'); // toThrow compara se a mensagem de erro é a mesma
+  });
+});
+
+describe('GetVideosService', () => {
+  let videoService: VideoService;
+  let videoRepo: VideoRepository;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        VideoService,
+        {
+          provide: VideoRepository,
+          useValue: {
+            findAll: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    videoService = moduleRef.get<VideoService>(VideoService);
+    videoRepo = moduleRef.get<VideoRepository>(VideoRepository);
+  });
+
+  it('should call findAll method', async () => {
+    await videoService.getVideos();
+    expect(videoRepo.findAll).toHaveBeenCalled(); // compara se o método foi chamado
+  });
+
+  it('should return an array of videos', async () => {
+    const result = [
+      {
+        id: 1,
+        title: 'test title',
+        description: 'video test description data',
+        category: 'test category',
+        url: 'https://www.test.com/video-test-data',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+      {
+        id: 2,
+        title: 'test title 2',
+        description: 'video test description data 2',
+        category: 'test category 2',
+        url: 'https://www.test.com/video-test-data-2',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+    ];
+
+    (videoRepo.findAll as jest.Mock).mockResolvedValue(result);
+
+    expect(await videoService.getVideos()).toBe(result); // compara se o resultado é o mesmo
   });
 });
