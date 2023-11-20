@@ -32,6 +32,7 @@ describe('VideosController', () => {
             createVideo: jest.fn(),
             getVideos: jest.fn(),
             getVideoById: jest.fn(),
+            getVideosByCategory: jest.fn(),
           },
         },
       ],
@@ -47,13 +48,6 @@ describe('VideosController', () => {
     expect(video).toMatchObject(createdVideo); // compara se o valor retornado é igual ao valor esperado
   });
 
-  it('should return a list of videos when no videoId is provided', async () => {
-    const videos = [{}]; // substitua por seus dados de vídeo
-    (service.getVideos as jest.Mock).mockResolvedValue(videos);
-
-    expect(await controller.getVideos()).toEqual(videos);
-  });
-
   it('should return a video by id when videoId is provided', async () => {
     const video = {
       id: 1,
@@ -67,7 +61,25 @@ describe('VideosController', () => {
 
     (service.getVideoById as jest.Mock).mockResolvedValue(video);
 
-    expect(await controller.getVideos(1)).toEqual([video]);
+    expect(await controller.getVideo(1)).toEqual(video);
+  });
+
+  it('should return a list of videos by category when category is provided', async () => {
+    const videos = [
+      {
+        id: 1,
+        title: 'test title',
+        description: 'video test description data',
+        category: 'test',
+        url: 'https://www.test.com/video-test-data',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+    ];
+
+    (service.getVideosByCategory as jest.Mock).mockResolvedValue(videos);
+
+    expect(await controller.getVideosByCategory('test')).toEqual(videos);
   });
 
   it('should return an empty array when no videos are found', async () => {

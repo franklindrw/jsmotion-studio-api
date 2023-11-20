@@ -24,4 +24,12 @@ export class VideoRepository {
       },
     });
   }
+
+  async findByCategory(category: string): Promise<VideoDto[]> {
+    return this.prisma.videos.findMany({
+      where: {
+        category,
+      },
+    });
+  }
 }

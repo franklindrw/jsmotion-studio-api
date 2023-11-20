@@ -9,7 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
 import { VideoDto } from './dtos/video.dto';
@@ -26,16 +26,44 @@ export class VideosController {
     type: [VideoDto],
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
-  @ApiQuery({ name: 'videoId', required: false })
-  async getVideos(@Query('videoId') videoId?: number): Promise<VideoDto[]> {
+  async getVideos(): Promise<VideoDto[]> {
     try {
-      if (videoId) {
-        const video = await this.videoService.getVideoById(videoId);
-        return [video];
-      } else {
-        const videos = await this.videoService.getVideos();
-        return videos;
-      }
+      const videos = await this.videoService.getVideos();
+      return videos;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Get('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou o vídeo com sucesso.',
+    type: VideoDto,
+  })
+  @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
+  async getVideo(@Query('id') id: number): Promise<VideoDto> {
+    try {
+      const video = await this.videoService.getVideoById(id);
+      return video;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @Get('/category/:category')
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou a lista de vídeos com sucesso.',
+    type: [VideoDto],
+  })
+  @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
+  async getVideosByCategory(
+    @Query('category') category: string,
+  ): Promise<VideoDto[]> {
+    try {
+      const videos = await this.videoService.getVideosByCategory(category);
+      return videos;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.NOT_FOUND);
     }

@@ -30,4 +30,14 @@ export class VideoService {
 
     return video;
   }
+
+  async getVideosByCategory(category: string): Promise<VideoDto[]> {
+    const videos = await this.videoRepo.findByCategory(category);
+
+    if (!videos || videos.length === 0) {
+      throw new BadRequestException('Não há vídeos cadastrados');
+    }
+
+    return videos;
+  }
 }

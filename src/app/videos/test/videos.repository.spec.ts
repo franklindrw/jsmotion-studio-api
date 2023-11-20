@@ -70,6 +70,10 @@ describe('GetVideosRepository', () => {
     jest
       .spyOn(videosRepo, 'findById')
       .mockImplementation(() => Promise.resolve({} as any));
+
+    jest
+      .spyOn(videosRepo, 'findByCategory')
+      .mockImplementation(() => Promise.resolve({} as any));
   });
 
   it('should call findAll method', async () => {
@@ -129,6 +133,22 @@ describe('GetVideosRepository', () => {
 
     (videosRepo.findById as jest.Mock).mockResolvedValue(video);
     const returnedVideo = await videosRepo.findById(1);
+    expect(returnedVideo).toEqual(video); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should return a video by category', async () => {
+    const video = {
+      id: 1,
+      title: 'test title',
+      description: 'video test description data',
+      category: 'category-testyng',
+      url: 'https://www.test.com/video-test-data',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    (videosRepo.findByCategory as jest.Mock).mockResolvedValue(video);
+    const returnedVideo = await videosRepo.findByCategory('category-testyng');
     expect(returnedVideo).toEqual(video); // compara se o valor retornado é igual ao valor esperado
   });
 

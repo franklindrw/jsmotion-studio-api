@@ -93,6 +93,7 @@ describe('GetVideosService', () => {
           useValue: {
             findAll: jest.fn(),
             findById: jest.fn(),
+            findByCategory: jest.fn(),
           },
         },
       ],
@@ -149,6 +150,25 @@ describe('GetVideosService', () => {
     (videoRepo.findById as jest.Mock).mockResolvedValue(video);
 
     expect(await videoService.getVideoById(1)).toBe(video); // compara se o resultado é o mesmo
+  });
+
+  it('should return a video by category', async () => {
+    const video = [
+      {
+        id: 1,
+        title: 'test title',
+        description: 'video test description data',
+        category: 'category-testing',
+        url: 'https://www.test.com/video-test-data',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+    ]; // substitua por seus dados de vídeo
+    (videoRepo.findByCategory as jest.Mock).mockResolvedValue(video);
+
+    expect(await videoService.getVideosByCategory('category-testing')).toBe(
+      video,
+    ); // compara se o resultado é o mesmo
   });
 
   it('should throw an error if no video is found by id', async () => {
