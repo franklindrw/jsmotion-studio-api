@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoDto } from './dtos/video.dto';
+import { VideoRepository } from './videos.repository';
 
 @Injectable()
 export class VideoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private videoRepo: VideoRepository) {}
 
   async createVideo(data: CreateVideoDto): Promise<VideoDto> {
-    return this.prisma.videos.create({
-      data,
-    });
+    return this.videoRepo.create(data);
   }
 }

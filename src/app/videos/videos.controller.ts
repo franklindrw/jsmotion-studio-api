@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
@@ -8,11 +8,6 @@ import { VideoDto } from './dtos/video.dto';
 @Controller('videos')
 export class VideosController {
   constructor(private readonly videoService: VideoService) {}
-
-  @Get()
-  getHello() {
-    return { hello: 'world!' };
-  }
 
   @Post()
   @ApiBody({ type: CreateVideoDto })
