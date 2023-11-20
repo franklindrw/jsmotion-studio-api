@@ -20,4 +20,14 @@ export class VideoService {
 
     return this.videoRepo.create(data);
   }
+
+  async getVideoById(id: number): Promise<VideoDto> {
+    const video = await this.videoRepo.findById(id);
+
+    if (!video) {
+      throw new BadRequestException('Não há vídeos cadastrados');
+    }
+
+    return video;
+  }
 }

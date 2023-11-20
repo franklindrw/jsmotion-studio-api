@@ -66,6 +66,10 @@ describe('GetVideosRepository', () => {
     jest
       .spyOn(videosRepo, 'findAll')
       .mockImplementation(() => Promise.resolve([]));
+
+    jest
+      .spyOn(videosRepo, 'findById')
+      .mockImplementation(() => Promise.resolve({} as any));
   });
 
   it('should call findAll method', async () => {
@@ -105,5 +109,31 @@ describe('GetVideosRepository', () => {
     (videosRepo.findAll as jest.Mock).mockResolvedValue(videos);
     const returnedVideos = await videosRepo.findAll();
     expect(returnedVideos).toEqual(videos); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should throw an error when findAll method fails', async () => {
+    (videosRepo.findAll as jest.Mock).mockRejectedValue(new Error());
+    await expect(videosRepo.findAll()).rejects.toThrow(); // compara se o método lançou um erro
+  });
+
+  it('should return a video by id', async () => {
+    const video = {
+      id: 1,
+      title: 'test title',
+      description: 'video test description data',
+      category: 'test category',
+      url: 'https://www.test.com/video-test-data',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    (videosRepo.findById as jest.Mock).mockResolvedValue(video);
+    const returnedVideo = await videosRepo.findById(1);
+    expect(returnedVideo).toEqual(video); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should throw an error when findById method fails', async () => {
+    (videosRepo.findById as jest.Mock).mockRejectedValue(new Error());
+    await expect(videosRepo.findById(1)).rejects.toThrow(); // compara se o método lançou um erro
   });
 });

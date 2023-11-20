@@ -16,4 +16,12 @@ export class VideoRepository {
   async findAll(): Promise<VideoDto[]> {
     return this.prisma.videos.findMany();
   }
+
+  async findById(id: number): Promise<VideoDto> {
+    return this.prisma.videos.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
 }

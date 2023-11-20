@@ -5,10 +5,11 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
 import { VideoDto } from './dtos/video.dto';
@@ -22,12 +23,22 @@ export class VideosController {
   @ApiResponse({
     status: 200,
     description: 'Retornou a lista de vídeos com sucesso.',
-    type: VideoDto,
+    type: [VideoDto],
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
-  async getVideos(): Promise<VideoDto[]> {
-    const videos = await this.videoService.getVideos();
-    return videos;
+  @ApiQuery({ name: 'videoId', required: false })
+  async getVideos(@Query('videoId') videoId?: number): Promise<VideoDto[]> {
+    try {
+      if (videoId) {
+        const video = await this.videoService.getVideoById(videoId);
+        return [video];
+      } else {
+        const videos = await this.videoService.getVideos();
+        return videos;
+      }
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+    }
   }
 
   @Post()

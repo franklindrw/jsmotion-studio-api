@@ -51,7 +51,7 @@ describe('CreateVideosService', () => {
 
   it('should call create method with correct data', async () => {
     await service.createVideo(data);
-    expect(repo.create).toHaveBeenCalledWith(data); // toHaveBeenCalledWith compara se o método foi chamado com os parâmetros corretos
+    expect(repo.create).toHaveBeenCalledWith(data); // compara se o método foi chamado com os parâmetros corretos
   });
 
   it('should not call create method with incorect data', async () => {
@@ -61,7 +61,7 @@ describe('CreateVideosService', () => {
       expect(e.message).toBe('Invalid data');
     }
 
-    expect(repo.create).not.toHaveBeenCalled(); // toHaveBeenCalled compara se o método foi chamado
+    expect(repo.create).not.toHaveBeenCalled(); // compara se o método foi chamado
   });
 
   it('should return a video when repository create a video', async () => {
@@ -69,13 +69,13 @@ describe('CreateVideosService', () => {
 
     const video = await service.createVideo(data);
 
-    expect(video).toMatchObject(data); // toMatchObject compara se os objetos possuem as mesmas propriedades
+    expect(video).toMatchObject(data); // compara se os objetos possuem as mesmas propriedades
   });
 
   it('should throw an error when repository fails to create a video', async () => {
     repo.create.mockRejectedValue(new Error('Repository error'));
 
-    await expect(service.createVideo(data)).rejects.toThrow('Repository error'); // toThrow compara se a mensagem de erro é a mesma
+    await expect(service.createVideo(data)).rejects.toThrow('Repository error'); // compara se a mensagem de erro é a mesma
   });
 });
 
