@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VideoRepository } from '../videos.repository';
 import { VideoService } from '../videos.service';
 import { CreateVideoDto } from '../dtos/create-video.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CreateVideosService', () => {
   let service: VideoService;
@@ -91,6 +92,7 @@ describe('GetVideosService', () => {
           provide: VideoRepository,
           useValue: {
             findAll: jest.fn(),
+            findById: jest.fn(),
           },
         },
       ],
@@ -130,5 +132,30 @@ describe('GetVideosService', () => {
     (videoRepo.findAll as jest.Mock).mockResolvedValue(result);
 
     expect(await videoService.getVideos()).toBe(result); // compara se o resultado é o mesmo
+  });
+
+  it('should return a video by id', async () => {
+    const video = [
+      {
+        id: 1,
+        title: 'test title',
+        description: 'video test description data',
+        category: 'test category',
+        url: 'https://www.test.com/video-test-data',
+        createdAt: new Date('2023-11-20T04:06:20.363Z'),
+        updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+      },
+    ]; // substitua por seus dados de vídeo
+    (videoRepo.findById as jest.Mock).mockResolvedValue(video);
+
+    expect(await videoService.getVideoById(1)).toBe(video); // compara se o resultado é o mesmo
+  });
+
+  it('should throw an error if no video is found by id', async () => {
+    (videoRepo.findById as jest.Mock).mockResolvedValue(null);
+
+    await expect(videoService.getVideoById(1)).rejects.toThrow(
+      BadRequestException,
+    ); // compara se a mensagem de erro é a mesma
   });
 });

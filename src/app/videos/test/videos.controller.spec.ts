@@ -30,6 +30,8 @@ describe('VideosController', () => {
           provide: VideoService,
           useValue: {
             createVideo: jest.fn(),
+            getVideos: jest.fn(),
+            getVideoById: jest.fn(),
           },
         },
       ],
@@ -43,6 +45,35 @@ describe('VideosController', () => {
     (service.createVideo as jest.Mock).mockResolvedValue(createdVideo);
     const video = await controller.createVideo(data);
     expect(video).toMatchObject(createdVideo); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should return a list of videos when no videoId is provided', async () => {
+    const videos = [{}]; // substitua por seus dados de vídeo
+    (service.getVideos as jest.Mock).mockResolvedValue(videos);
+
+    expect(await controller.getVideos()).toEqual(videos);
+  });
+
+  it('should return a video by id when videoId is provided', async () => {
+    const video = {
+      id: 1,
+      title: 'test title',
+      description: 'video test description data',
+      category: 'test category',
+      url: 'https://www.test.com/video-test-data',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    (service.getVideoById as jest.Mock).mockResolvedValue(video);
+
+    expect(await controller.getVideos(1)).toEqual([video]);
+  });
+
+  it('should return an empty array when no videos are found', async () => {
+    (service.getVideos as jest.Mock).mockResolvedValue([]);
+
+    expect(await controller.getVideos()).toEqual([]);
   });
 
   it('should handle errors thrown by VideoService', async () => {
