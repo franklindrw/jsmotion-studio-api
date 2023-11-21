@@ -33,6 +33,9 @@ describe('CreateVideosService', () => {
   beforeEach(async () => {
     const repoMock = {
       create: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     // O método create do repositório será substituído por uma função mockada
@@ -77,6 +80,51 @@ describe('CreateVideosService', () => {
     repo.create.mockRejectedValue(new Error('Repository error'));
 
     await expect(service.createVideo(data)).rejects.toThrow('Repository error'); // compara se a mensagem de erro é a mesma
+  });
+
+  it('should update a video', async () => {
+    const video = {
+      id: 1,
+      title: 'Video 1',
+      description: 'descricao para o video 1',
+      category: 'categoria 1',
+      url: 'https://www.youtube.com/watch?v=1',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    const updatedVideo = {
+      ...video,
+      title: 'test update title',
+      description: 'test update description',
+    };
+
+    jest.spyOn(repo, 'findById').mockResolvedValue(video);
+    jest.spyOn(repo, 'update').mockResolvedValue(updatedVideo);
+
+    expect(
+      await service.updateVideo(1, {
+        title: 'test update title',
+        description: 'test update description',
+      }),
+    ).toEqual(updatedVideo);
+  });
+
+  it('should delete a video', async () => {
+    const video = {
+      id: 1,
+      title: 'Video 1',
+      description: 'descricao para o video 1',
+      category: 'categoria 1',
+      url: 'https://www.youtube.com/watch?v=1',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    jest.spyOn(repo, 'findById').mockResolvedValue(video);
+    jest.spyOn(repo, 'delete').mockResolvedValue(video);
+
+    expect(await service.deleteVideo(1)).toEqual(video);
   });
 });
 

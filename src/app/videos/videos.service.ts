@@ -40,4 +40,31 @@ export class VideoService {
 
     return videos;
   }
+
+  async updateVideo(
+    id: number,
+    data: Partial<CreateVideoDto>,
+  ): Promise<VideoDto> {
+    // verifica se o vídeo existe
+    const video = await this.videoRepo.findById(id);
+
+    if (!video) {
+      throw new BadRequestException('Não há vídeos cadastrados');
+    }
+
+    // verifica se os dados são válidos e atualiza o vídeo no banco
+    return this.videoRepo.update(id, data);
+  }
+
+  async deleteVideo(id: number): Promise<VideoDto> {
+    // verifica se o vídeo existe
+    const video = await this.videoRepo.findById(id);
+
+    if (!video) {
+      throw new BadRequestException('Não há vídeos cadastrados');
+    }
+
+    // deleta o vídeo do banco
+    return this.videoRepo.delete(id);
+  }
 }
