@@ -33,6 +33,8 @@ describe('VideosController', () => {
             getVideos: jest.fn(),
             getVideoById: jest.fn(),
             getVideosByCategory: jest.fn(),
+            updateVideo: jest.fn(),
+            deleteVideo: jest.fn(),
           },
         },
       ],
@@ -86,6 +88,34 @@ describe('VideosController', () => {
     (service.getVideos as jest.Mock).mockResolvedValue([]);
 
     expect(await controller.getVideos()).toEqual([]);
+  });
+
+  it('should return an updated video', async () => {
+    const updatedVideo = {
+      description: 'video test description data',
+      category: 'test category',
+      url: 'https://www.test.com/video-test-data',
+    };
+
+    (service.updateVideo as jest.Mock).mockResolvedValue(updatedVideo);
+
+    expect(await controller.updateVideo(1, data)).toEqual(updatedVideo);
+  });
+
+  it('should return a deleted video', async () => {
+    const deletedVideo = {
+      id: 1,
+      title: 'test title',
+      description: 'video test description data',
+      category: 'test category',
+      url: 'https://www.test.com/video-test-data',
+      createdAt: new Date('2023-11-20T04:06:20.363Z'),
+      updatedAt: new Date('2023-11-20T04:06:20.363Z'),
+    };
+
+    (service.deleteVideo as jest.Mock).mockResolvedValue(deletedVideo);
+
+    expect(await controller.deleteVideo(1)).toEqual(deletedVideo);
   });
 
   it('should handle errors thrown by VideoService', async () => {

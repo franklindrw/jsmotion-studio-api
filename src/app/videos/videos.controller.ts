@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
-  Query,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -42,7 +44,7 @@ export class VideosController {
     type: VideoDto,
   })
   @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
-  async getVideo(@Query('id') id: number): Promise<VideoDto> {
+  async getVideo(@Param('id') id: number): Promise<VideoDto> {
     try {
       const video = await this.videoService.getVideoById(id);
       return video;
@@ -59,7 +61,7 @@ export class VideosController {
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
   async getVideosByCategory(
-    @Query('category') category: string,
+    @Param('category') category: string,
   ): Promise<VideoDto[]> {
     try {
       const videos = await this.videoService.getVideosByCategory(category);
@@ -84,6 +86,44 @@ export class VideosController {
       return videoData;
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+  }
+
+  @Put('/:id')
+  @ApiBody({ type: CreateVideoDto })
+  @ApiResponse({
+    status: 200,
+    description: 'O Vídeo foi atualizado com sucesso.',
+    type: VideoDto,
+  })
+  @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
+  @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
+  @UsePipes(new ValidationPipe())
+  async updateVideo(
+    @Param('id') id: number,
+    @Body() videoData: Partial<CreateVideoDto>,
+  ): Promise<VideoDto> {
+    try {
+      const video = await this.videoService.updateVideo(id, videoData);
+      return video;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+  }
+
+  @Delete('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'O Vídeo foi deletado com sucesso.',
+    type: VideoDto,
+  })
+  @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
+  async deleteVideo(@Param('id') id: number): Promise<VideoDto> {
+    try {
+      const video = await this.videoService.deleteVideo(id);
+      return video;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
     }
   }
 }

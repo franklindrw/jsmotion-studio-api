@@ -28,9 +28,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
+      transform: true, // transforma os dados recebidos em DTOs
     }),
-  ); // adicionando o pipe de validação globalmente
+  );
   await app.listen(3000);
 }
 bootstrap();
