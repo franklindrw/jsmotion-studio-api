@@ -32,4 +32,45 @@ export class VideoRepository {
       },
     });
   }
+
+  async update(id: number, data: Partial<CreateVideoDto>): Promise<VideoDto> {
+    // verifica se o vídeo existe
+    const video = await this.prisma.videos.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!video) {
+      throw new Error('Video not found');
+    }
+
+    // atualiza o vídeo no banco de dados
+    return this.prisma.videos.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
+
+  async delete(id: number): Promise<VideoDto> {
+    // verifica se o vídeo existe
+    const video = await this.prisma.videos.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!video) {
+      throw new Error('Video not found');
+    }
+
+    // deleta o vídeo do banco de dados
+    return this.prisma.videos.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

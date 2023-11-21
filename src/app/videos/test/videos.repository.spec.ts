@@ -74,6 +74,14 @@ describe('GetVideosRepository', () => {
     jest
       .spyOn(videosRepo, 'findByCategory')
       .mockImplementation(() => Promise.resolve({} as any));
+
+    jest
+      .spyOn(videosRepo, 'update')
+      .mockImplementation(() => Promise.resolve({} as any));
+
+    jest
+      .spyOn(videosRepo, 'delete')
+      .mockImplementation(() => Promise.resolve({} as any));
   });
 
   it('should call findAll method', async () => {
@@ -150,6 +158,44 @@ describe('GetVideosRepository', () => {
     (videosRepo.findByCategory as jest.Mock).mockResolvedValue(video);
     const returnedVideo = await videosRepo.findByCategory('category-testyng');
     expect(returnedVideo).toEqual(video); // compara se o valor retornado é igual ao valor esperado
+  });
+
+  it('should update a video', async () => {
+    const video = {
+      id: 1,
+      title: 'Test update title',
+      description: 'video test description data',
+    };
+    videosRepo.update(video.id, video);
+    expect(videosRepo.update).toHaveBeenCalledWith(video.id, video);
+  });
+
+  it('should throw an error when updating a non-existing video', async () => {
+    jest.spyOn(videosRepo, 'update').mockImplementation(() => {
+      return Promise.reject(new Error());
+    });
+
+    const video = {
+      id: 1,
+      title: 'test title',
+      description: 'video test description data',
+    };
+
+    await expect(videosRepo.update(2, video)).rejects.toThrow(); // compara se o método lançou um erro
+  });
+
+  it('should delete a video', async () => {
+    const videoId = 1;
+    videosRepo.delete(videoId);
+    expect(videosRepo.delete).toHaveBeenCalledWith(videoId);
+  });
+
+  it('should throw an error when deleting a non-existing video', async () => {
+    jest.spyOn(videosRepo, 'delete').mockImplementation(() => {
+      return Promise.reject(new Error());
+    });
+
+    await expect(videosRepo.delete(2)).rejects.toThrow(); // compara se o método lançou um erro
   });
 
   it('should throw an error when findById method fails', async () => {
