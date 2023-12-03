@@ -11,7 +11,7 @@ describe('CreateVideoRepository', () => {
   const data: CreateVideoDto = {
     title: 'test title',
     description: 'video test description data',
-    category: 'test category',
+    category_id: 1,
     url: 'https://www.test.com/video-test-data',
   };
 
@@ -102,7 +102,7 @@ describe('GetVideosRepository', () => {
         id: 1,
         title: 'test title',
         description: 'video test description data',
-        category: 'test category',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -111,7 +111,7 @@ describe('GetVideosRepository', () => {
         id: 2,
         title: 'test title 2',
         description: 'video test description data 2',
-        category: 'test category 2',
+        category_id: 2,
         url: 'https://www.test.com/video-test-data-2',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -133,7 +133,7 @@ describe('GetVideosRepository', () => {
       id: 1,
       title: 'test title',
       description: 'video test description data',
-      category: 'test category',
+      category_id: 1,
       url: 'https://www.test.com/video-test-data',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -149,14 +149,14 @@ describe('GetVideosRepository', () => {
       id: 1,
       title: 'test title',
       description: 'video test description data',
-      category: 'category-testyng',
+      category_id: 1,
       url: 'https://www.test.com/video-test-data',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),
     };
 
     (videosRepo.findByCategory as jest.Mock).mockResolvedValue(video);
-    const returnedVideo = await videosRepo.findByCategory('category-testyng');
+    const returnedVideo = await videosRepo.findByCategory(1);
     expect(returnedVideo).toEqual(video); // compara se o valor retornado é igual ao valor esperado
   });
 

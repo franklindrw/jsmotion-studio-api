@@ -61,7 +61,7 @@ export class VideosController {
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
   async getVideosByCategory(
-    @Param('category') category: string,
+    @Param('category') category: number,
   ): Promise<VideoDto[]> {
     try {
       const videos = await this.videoService.getVideosByCategory(category);

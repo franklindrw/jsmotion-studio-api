@@ -11,7 +11,7 @@ describe('VideosController', () => {
   const data: CreateVideoDto = {
     title: 'test title',
     description: 'video test description data',
-    category: 'test category',
+    category_id: 1,
     url: 'https://www.test.com/video-test-data',
   };
 
@@ -55,7 +55,7 @@ describe('VideosController', () => {
       id: 1,
       title: 'test title',
       description: 'video test description data',
-      category: 'test category',
+      category_id: 1,
       url: 'https://www.test.com/video-test-data',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -72,7 +72,7 @@ describe('VideosController', () => {
         id: 1,
         title: 'test title',
         description: 'video test description data',
-        category: 'test',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -81,7 +81,7 @@ describe('VideosController', () => {
 
     (service.getVideosByCategory as jest.Mock).mockResolvedValue(videos);
 
-    expect(await controller.getVideosByCategory('test')).toEqual(videos);
+    expect(await controller.getVideosByCategory(1)).toEqual(videos);
   });
 
   it('should return an empty array when no videos are found', async () => {
@@ -107,7 +107,7 @@ describe('VideosController', () => {
       id: 1,
       title: 'test title',
       description: 'video test description data',
-      category: 'test category',
+      category_id: 1,
       url: 'https://www.test.com/video-test-data',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),

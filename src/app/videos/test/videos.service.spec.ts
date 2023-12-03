@@ -12,7 +12,7 @@ describe('CreateVideosService', () => {
   const data: CreateVideoDto = {
     title: 'test title',
     description: 'video test description data',
-    category: 'test category',
+    category_id: 1,
     url: 'https://www.test.com/video-test-data',
   };
 
@@ -26,7 +26,7 @@ describe('CreateVideosService', () => {
   const dataError: CreateVideoDto = {
     title: '',
     description: 'video test description data',
-    category: 'test category',
+    category_id: 1,
     url: 'https://www.test.com/video-test-data',
   };
 
@@ -87,7 +87,7 @@ describe('CreateVideosService', () => {
       id: 1,
       title: 'Video 1',
       description: 'descricao para o video 1',
-      category: 'categoria 1',
+      category_id: 1,
       url: 'https://www.youtube.com/watch?v=1',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -115,7 +115,7 @@ describe('CreateVideosService', () => {
       id: 1,
       title: 'Video 1',
       description: 'descricao para o video 1',
-      category: 'categoria 1',
+      category_id: 1,
       url: 'https://www.youtube.com/watch?v=1',
       createdAt: new Date('2023-11-20T04:06:20.363Z'),
       updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -162,7 +162,7 @@ describe('GetVideosService', () => {
         id: 1,
         title: 'test title',
         description: 'video test description data',
-        category: 'test category',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -171,7 +171,7 @@ describe('GetVideosService', () => {
         id: 2,
         title: 'test title 2',
         description: 'video test description data 2',
-        category: 'test category 2',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data-2',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -189,7 +189,7 @@ describe('GetVideosService', () => {
         id: 1,
         title: 'test title',
         description: 'video test description data',
-        category: 'test category',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -206,7 +206,7 @@ describe('GetVideosService', () => {
         id: 1,
         title: 'test title',
         description: 'video test description data',
-        category: 'category-testing',
+        category_id: 1,
         url: 'https://www.test.com/video-test-data',
         createdAt: new Date('2023-11-20T04:06:20.363Z'),
         updatedAt: new Date('2023-11-20T04:06:20.363Z'),
@@ -214,9 +214,7 @@ describe('GetVideosService', () => {
     ]; // substitua por seus dados de vídeo
     (videoRepo.findByCategory as jest.Mock).mockResolvedValue(video);
 
-    expect(await videoService.getVideosByCategory('category-testing')).toBe(
-      video,
-    ); // compara se o resultado é o mesmo
+    expect(await videoService.getVideosByCategory(1)).toBe(video); // compara se o resultado é o mesmo
   });
 
   it('should throw an error if no video is found by id', async () => {

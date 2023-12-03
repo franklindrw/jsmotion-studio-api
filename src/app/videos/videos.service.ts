@@ -12,9 +12,9 @@ export class VideoService {
   }
 
   async createVideo(data: CreateVideoDto): Promise<VideoDto> {
-    const { title, description, category, url } = data;
+    const { title, description, category_id, url } = data;
 
-    if (!title || !description || !category || !url) {
+    if (!title || !description || !category_id || !url) {
       throw new BadRequestException('Invalid data');
     }
 
@@ -31,7 +31,7 @@ export class VideoService {
     return video;
   }
 
-  async getVideosByCategory(category: string): Promise<VideoDto[]> {
+  async getVideosByCategory(category: number): Promise<VideoDto[]> {
     const videos = await this.videoRepo.findByCategory(category);
 
     if (!videos || videos.length === 0) {
