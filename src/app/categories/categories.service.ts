@@ -1,23 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoryRepository } from './category.repository';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(private readonly categoryRepo: CategoryRepository) {}
+
+  create(data: CreateCategoryDto) {
+    const { title, color } = data;
+
+    if (!title || !color) {
+      throw new BadRequestException('Invalid data');
+    }
+
+    return this.categoryRepo.create(data);
   }
 
   findAll() {
     return `This action returns all categories`;
   }
 
-  findOne(id: number) {
+  findById(id: number) {
     return `This action returns a #${id} category`;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  update(id: number, data: UpdateCategoryDto) {
+    return { message: `This action updates a #${id} category`, data };
   }
 
   remove(id: number) {
