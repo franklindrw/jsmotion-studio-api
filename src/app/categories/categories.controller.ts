@@ -39,12 +39,35 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou a lista de categorias com sucesso.',
+    type: [CategoryDto],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não há categorias cadastradas cadastrados.',
+  })
+  async getCategories(): Promise<CategoryDto[]> {
+    try {
+      const categories = this.categoriesService.findAll();
+      return categories;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou a categoria com sucesso.',
+    type: CategoryDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não há categorias cadastradas cadastrados.',
+  })
+  findOne(@Param('id') id: string): Promise<CategoryDto> {
     return this.categoriesService.findById(+id);
   }
 
