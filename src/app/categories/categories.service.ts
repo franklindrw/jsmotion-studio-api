@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryRepository } from './category.repository';
@@ -12,21 +7,24 @@ import { CategoryRepository } from './category.repository';
 export class CategoriesService {
   constructor(private readonly categoryRepo: CategoryRepository) {}
 
-  create(data: CreateCategoryDto) {
+  async create(data: CreateCategoryDto) {
     const { title, color } = data;
 
     if (!title || !color) {
-      throw new BadRequestException('Invalid data');
+      throw new HttpException(
+        'Missing required fields',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    return this.categoryRepo.create(data);
+    return await this.categoryRepo.create(data);
   }
 
   async findAll() {
     const categories = await this.categoryRepo.findAll();
 
     if (!categories.length) {
-      throw new BadRequestException('Categories not found');
+      throw new HttpException('No categories found', HttpStatus.NOT_FOUND);
     }
 
     return categories;
@@ -42,11 +40,41 @@ export class CategoriesService {
     return category;
   }
 
-  update(id: number, data: UpdateCategoryDto) {
-    return { message: `This action updates a #${id} category`, data };
+  async update(id: number, data: UpdateCategoryDto) {
+    // verifica se a categoria existe
+    const category = await this.categoryRepo.findById(id);
+
+    if (!category) {
+      throw new HttpException(
+        'Não há categoria cadastrada com esse id.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // verifica se os dados são válidos
+    const { title, color } = data;
+    if (!title || !color) {
+      throw new HttpException(
+        'Missing required fields',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    // atualiza a categoria no banco de dados
+    return await this.categoryRepo.update(id, data);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    // verifica se a categoria existe
+    const category = await this.categoryRepo.findById(id);
+
+    if (!category) {
+      throw new HttpException(
+        'Não há categoria cadastrada com esse id.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await this.categoryRepo.delete(id);
   }
 }

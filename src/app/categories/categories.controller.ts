@@ -7,13 +7,13 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpException,
-  HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -29,13 +29,8 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
   @UsePipes(new ValidationPipe())
-  create(@Body() data: CreateCategoryDto) {
-    try {
-      const category = this.categoriesService.create(data);
-      return category;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+  async create(@Body() data: CreateCategoryDto) {
+    return await this.categoriesService.create(data);
   }
 
   @Get()
@@ -49,12 +44,7 @@ export class CategoriesController {
     description: 'Não há categorias cadastradas cadastrados.',
   })
   async getCategories(): Promise<CategoryDto[]> {
-    try {
-      const categories = this.categoriesService.findAll();
-      return categories;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-    }
+    return await this.categoriesService.findAll();
   }
 
   @Get(':id')
@@ -65,14 +55,44 @@ export class CategoriesController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Não há categorias cadastradas cadastrados.',
+    description: 'Não há categoria cadastrada com esse id.',
   })
   findOne(@Param('id') id: string): Promise<CategoryDto> {
     return this.categoriesService.findById(+id);
   }
 
+  @Put(':id')
+  @ApiBody({ type: UpdateCategoryDto })
+  @ApiResponse({
+    status: 200,
+    description: `A categoria foi atualizada com sucesso.`,
+    type: CategoryDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não há categoria cadastrada com esse id.',
+  })
+  @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
+  @UsePipes(new ValidationPipe())
+  async updateCategory(
+    @Param('id') id: string,
+    @Body() data: UpdateCategoryDto,
+  ) {
+    const category = await this.categoriesService.update(+id, data);
+    return { message: `A categoria #${id} foi atualizada`, category };
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  @ApiResponse({
+    status: 200,
+    description: `A categoria foi excluída com sucesso.`,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Não há categoria cadastrada com esse id.',
+  })
+  async remove(@Param('id') id: string) {
+    await this.categoriesService.remove(+id);
+    return { message: `A categoria #${id} foi excluída` };
   }
 }

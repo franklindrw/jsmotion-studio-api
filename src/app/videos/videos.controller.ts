@@ -29,12 +29,8 @@ export class VideosController {
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
   async getVideos(): Promise<VideoDto[]> {
-    try {
-      const videos = await this.videoService.getVideos();
-      return videos;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-    }
+    const videos = await this.videoService.getVideos();
+    return videos;
   }
 
   @Get('/:id')
