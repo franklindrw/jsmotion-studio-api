@@ -24,7 +24,10 @@ export class CategoriesService {
     const categories = await this.categoryRepo.findAll();
 
     if (!categories.length) {
-      throw new HttpException('No categories found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Nao há categorias cadastradas',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     return categories;
@@ -34,7 +37,20 @@ export class CategoriesService {
     const category = await this.categoryRepo.findById(id);
 
     if (!category) {
-      throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Categoria não encontrada', HttpStatus.NOT_FOUND);
+    }
+
+    return category;
+  }
+
+  async findVideosByCategory(id: number) {
+    const category = await this.categoryRepo.findVideosByCategory(id);
+
+    if (!category || !category.length) {
+      throw new HttpException(
+        'Não há vídeos com essa categoria',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     return category;

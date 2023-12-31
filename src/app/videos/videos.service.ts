@@ -31,16 +31,6 @@ export class VideoService {
     return video;
   }
 
-  async getVideosByCategory(category: number): Promise<VideoDto[]> {
-    const videos = await this.videoRepo.findByCategory(category);
-
-    if (!videos || videos.length === 0) {
-      throw new BadRequestException('Não há vídeos cadastrados');
-    }
-
-    return videos;
-  }
-
   async updateVideo(
     id: number,
     data: Partial<CreateVideoDto>,

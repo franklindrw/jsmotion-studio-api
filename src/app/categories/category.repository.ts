@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryDto } from './dto/category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { VideoDto } from '../videos/dtos/video.dto';
 
 @Injectable()
 export class CategoryRepository {
@@ -16,6 +17,22 @@ export class CategoryRepository {
     return await this.prisma.categories.findUnique({
       where: { id },
     });
+  }
+
+  async findVideosByCategory(id: number): Promise<VideoDto[]> {
+    // lista todos os videos com o id da categoria
+    const data = await this.prisma.categories.findUnique({
+      where: { id },
+      include: {
+        videos: true,
+      },
+    });
+
+    if (!data) {
+      return null;
+    }
+
+    return data.videos;
   }
 
   async create(data: CreateCategoryDto): Promise<CategoryDto> {

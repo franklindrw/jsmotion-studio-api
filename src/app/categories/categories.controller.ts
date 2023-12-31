@@ -14,24 +14,12 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { VideoDto } from '../videos/dtos/video.dto';
 
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
-
-  @Post()
-  @ApiBody({ type: CreateCategoryDto })
-  @ApiResponse({
-    status: 201,
-    description: 'A categoria foi criado com sucesso.',
-    type: CategoryDto,
-  })
-  @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
-  @UsePipes(new ValidationPipe())
-  async create(@Body() data: CreateCategoryDto) {
-    return await this.categoriesService.create(data);
-  }
 
   @Get()
   @ApiResponse({
@@ -59,6 +47,30 @@ export class CategoriesController {
   })
   findOne(@Param('id') id: string): Promise<CategoryDto> {
     return this.categoriesService.findById(+id);
+  }
+
+  @Get(':category/videos')
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou a lista de vídeos com sucesso.',
+    type: [VideoDto],
+  })
+  @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
+  async getVideosByCategory(@Param('category') category: number) {
+    return await this.categoriesService.findVideosByCategory(+category);
+  }
+
+  @Post()
+  @ApiBody({ type: CreateCategoryDto })
+  @ApiResponse({
+    status: 201,
+    description: 'A categoria foi criado com sucesso.',
+    type: CategoryDto,
+  })
+  @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
+  @UsePipes(new ValidationPipe())
+  async create(@Body() data: CreateCategoryDto) {
+    return await this.categoriesService.create(data);
   }
 
   @Put(':id')

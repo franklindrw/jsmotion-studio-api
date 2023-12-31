@@ -49,24 +49,6 @@ export class VideosController {
     }
   }
 
-  @Get('/category/:category')
-  @ApiResponse({
-    status: 200,
-    description: 'Retornou a lista de vídeos com sucesso.',
-    type: [VideoDto],
-  })
-  @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
-  async getVideosByCategory(
-    @Param('category') category: number,
-  ): Promise<VideoDto[]> {
-    try {
-      const videos = await this.videoService.getVideosByCategory(category);
-      return videos;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-    }
-  }
-
   @Post()
   @ApiBody({ type: CreateVideoDto })
   @ApiResponse({
