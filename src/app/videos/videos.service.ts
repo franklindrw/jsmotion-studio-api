@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoDto } from './dtos/video.dto';
 import { VideoRepository } from './videos.repository';
@@ -11,11 +11,27 @@ export class VideoService {
     return this.videoRepo.findAll();
   }
 
+  async getVideosByTitle(title: string): Promise<VideoDto[]> {
+    const videos = await this.videoRepo.findByTitle(title);
+
+    if (!videos || !videos.length) {
+      throw new HttpException(
+        'Não há vídeos cadastrados',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return videos;
+  }
+
   async createVideo(data: CreateVideoDto): Promise<VideoDto> {
     const { title, description, category_id, url } = data;
 
     if (!title || !description || !category_id || !url) {
-      throw new BadRequestException('Invalid data');
+      throw new HttpException(
+        'Informações obrigatórias não foram preenchidas',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return this.videoRepo.create(data);
@@ -25,7 +41,7 @@ export class VideoService {
     const video = await this.videoRepo.findById(id);
 
     if (!video) {
-      throw new BadRequestException('Não há vídeos cadastrados');
+      throw new HttpException('Vídeo não encontrado', HttpStatus.NOT_FOUND);
     }
 
     return video;
@@ -39,7 +55,7 @@ export class VideoService {
     const video = await this.videoRepo.findById(id);
 
     if (!video) {
-      throw new BadRequestException('Não há vídeos cadastrados');
+      throw new HttpException('Vídeo não encontrado', HttpStatus.NOT_FOUND);
     }
 
     // verifica se os dados são válidos e atualiza o vídeo no banco
@@ -51,7 +67,7 @@ export class VideoService {
     const video = await this.videoRepo.findById(id);
 
     if (!video) {
-      throw new BadRequestException('Não há vídeos cadastrados');
+      throw new HttpException('Vídeo não encontrado', HttpStatus.NOT_FOUND);
     }
 
     // deleta o vídeo do banco

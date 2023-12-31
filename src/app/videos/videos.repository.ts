@@ -25,6 +25,17 @@ export class VideoRepository {
     });
   }
 
+  async findByTitle(title: string): Promise<VideoDto[]> {
+    return this.prisma.videos.findMany({
+      where: {
+        title: {
+          contains: title,
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
+
   async update(id: number, data: Partial<CreateVideoDto>): Promise<VideoDto> {
     // verifica se o vídeo existe
     const video = await this.prisma.videos.findUnique({

@@ -3,15 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
 import { VideoDto } from './dtos/video.dto';
@@ -22,13 +21,18 @@ export class VideosController {
   constructor(private readonly videoService: VideoService) {}
 
   @Get()
+  @ApiQuery({ name: 'search', required: false })
   @ApiResponse({
     status: 200,
     description: 'Retornou a lista de vídeos com sucesso.',
     type: [VideoDto],
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
-  async getVideos(): Promise<VideoDto[]> {
+  async getVideos(@Query('search') search?: string): Promise<VideoDto[]> {
+    if (search) {
+      const videos = await this.videoService.getVideosByTitle(search);
+      return videos;
+    }
     const videos = await this.videoService.getVideos();
     return videos;
   }
@@ -41,12 +45,7 @@ export class VideosController {
   })
   @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
   async getVideo(@Param('id') id: number): Promise<VideoDto> {
-    try {
-      const video = await this.videoService.getVideoById(id);
-      return video;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-    }
+    return await this.videoService.getVideoById(id);
   }
 
   @Post()
@@ -59,12 +58,7 @@ export class VideosController {
   @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
   @UsePipes(new ValidationPipe())
   async createVideo(@Body() newVideoData: CreateVideoDto): Promise<VideoDto> {
-    try {
-      const videoData = await this.videoService.createVideo(newVideoData);
-      return videoData;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+    return await this.videoService.createVideo(newVideoData);
   }
 
   @Put('/:id')
@@ -81,12 +75,7 @@ export class VideosController {
     @Param('id') id: number,
     @Body() videoData: Partial<CreateVideoDto>,
   ): Promise<VideoDto> {
-    try {
-      const video = await this.videoService.updateVideo(id, videoData);
-      return video;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+    return await this.videoService.updateVideo(id, videoData);
   }
 
   @Delete('/:id')
@@ -97,11 +86,6 @@ export class VideosController {
   })
   @ApiResponse({ status: 404, description: 'Vídeo não encontrado.' })
   async deleteVideo(@Param('id') id: number): Promise<VideoDto> {
-    try {
-      const video = await this.videoService.deleteVideo(id);
-      return video;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-    }
+    return await this.videoService.deleteVideo(id);
   }
 }
