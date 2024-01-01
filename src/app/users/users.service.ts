@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -55,11 +55,33 @@ export class UsersService {
     return user;
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(userId: number, updateUserDto: UpdateUserDto) {
+    // verifica se o usuário existe
+    const user = await this.usersRepo.findById(userId);
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // atualiza o usuário
+    await this.usersRepo.update(userId, updateUserDto);
+
+    // retorna o usuário atualizado
+    return await this.usersRepo.findById(userId);
+  }
+
+  async remove(id: number) {
+    // verifica se o usuário existe
+    const user = await this.usersRepo.findById(id);
+
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // remove o usuário
+    const message = await this.usersRepo.remove(id);
+
+    // retorna a mensagem de sucesso
+    return { message: message };
+  }
 }

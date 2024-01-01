@@ -7,10 +7,12 @@ import {
   UsePipes,
   ValidationPipe,
   Query,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
 
@@ -29,7 +31,6 @@ export class UsersController {
   @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
   @ApiResponse({ status: 409, description: 'Conflito de dados.' })
   @ApiResponse({ status: 500, description: 'Erro interno do servidor.' })
-  @UsePipes(new ValidationPipe())
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
@@ -63,13 +64,32 @@ export class UsersController {
     return await this.usersService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
+  @Put(':id')
+  @ApiBody({ type: UpdateUserDto, required: false })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário atualizado com sucesso.',
+    type: UserDto,
+  })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
+  @ApiResponse({ status: 422, description: 'Dados enviados são inválidos.' })
+  @ApiResponse({ status: 500, description: 'Erro interno do servidor.' })
+  @UsePipes(new ValidationPipe())
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: Partial<UpdateUserDto>,
+  ): Promise<any> {
+    return await this.usersService.update(+id, updateUserDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
+  @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário removido com sucesso.',
+  })
+  @ApiResponse({ status: 404, description: 'Usuário não encontrado.' })
+  @ApiResponse({ status: 500, description: 'Erro interno do servidor.' })
+  async remove(@Param('id') id: string) {
+    return await this.usersService.remove(+id);
+  }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -63,5 +64,26 @@ export class UsersRepository {
     delete newUser.password;
 
     return newUser;
+  }
+
+  async update(userId: number, data: Partial<UpdateUserDto>) {
+    // atualiza o usuário no banco de dados
+    return await this.prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data,
+    });
+  }
+
+  async remove(userId: number) {
+    // remove o usuário do banco de dados
+    await this.prisma.users.delete({
+      where: {
+        id: userId,
+      },
+    });
+
+    return `Usuário #${userId} removido do sistema.`;
   }
 }
