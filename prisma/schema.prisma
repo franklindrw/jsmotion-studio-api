@@ -24,3 +24,12 @@ model Categories {
   color   String
   videos Videos[]
 }
+
+model Users {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
