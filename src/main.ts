@@ -23,6 +23,7 @@ async function bootstrap() {
       'API para o registro e upload de videos na plataforma JSMotion Studio',
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
