@@ -7,17 +7,17 @@ import { VideoDto } from './dtos/video.dto';
 export class VideoRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateVideoDto): Promise<VideoDto> {
+  create(data: CreateVideoDto): Promise<VideoDto> {
     return this.prisma.videos.create({
       data,
     });
   }
 
-  async findAll(): Promise<VideoDto[]> {
+  findAll(): Promise<VideoDto[]> {
     return this.prisma.videos.findMany();
   }
 
-  async findById(id: number): Promise<VideoDto> {
+  findById(id: number): Promise<VideoDto> {
     return this.prisma.videos.findUnique({
       where: {
         id,
@@ -25,13 +25,22 @@ export class VideoRepository {
     });
   }
 
-  async findByTitle(title: string): Promise<VideoDto[]> {
+  findByTitle(title: string): Promise<VideoDto[]> {
     return this.prisma.videos.findMany({
       where: {
         title: {
           contains: title,
           mode: 'insensitive',
         },
+      },
+    });
+  }
+
+  findAllFree(): Promise<VideoDto[]> {
+    return this.prisma.videos.findMany({
+      take: 5,
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

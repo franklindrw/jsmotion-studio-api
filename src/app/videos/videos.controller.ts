@@ -47,6 +47,18 @@ export class VideosController {
     return videos;
   }
 
+  @Get('free')
+  @ApiResponse({
+    status: 200,
+    description: 'Retornou a lista de vídeos com sucesso.',
+    type: [VideoDto],
+  })
+  @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
+  @ApiResponse({ status: 500, description: 'Erro interno do servidor.' })
+  async getVideosFree(): Promise<VideoDto[]> {
+    return await this.videoService.getVideosFree();
+  }
+
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('/:id')

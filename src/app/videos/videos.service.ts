@@ -8,7 +8,11 @@ export class VideoService {
   constructor(private readonly videoRepo: VideoRepository) {}
 
   async getVideos(): Promise<VideoDto[]> {
-    return this.videoRepo.findAll();
+    return await this.videoRepo.findAll();
+  }
+
+  async getVideosFree() {
+    return await this.videoRepo.findAllFree();
   }
 
   async getVideosByTitle(title: string): Promise<VideoDto[]> {
