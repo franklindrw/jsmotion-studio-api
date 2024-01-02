@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { hashPassword } from 'src/utils/cryptpass.util';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,9 @@ export class UsersService {
     if (user) {
       throw new HttpException('Usuário já existe', HttpStatus.CONFLICT);
     }
+
+    // criptografa a senha
+    createUserDto.password = await hashPassword(createUserDto.password);
 
     // cria o usuário no banco de dados
     return await this.usersRepo.create(createUserDto);
@@ -61,6 +65,11 @@ export class UsersService {
 
     if (!user) {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    // criptografa a senha
+    if (updateUserDto.password) {
+      updateUserDto.password = await hashPassword(updateUserDto.password);
     }
 
     // atualiza o usuário
