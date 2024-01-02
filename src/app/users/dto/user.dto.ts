@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { IsDate, IsEmail, IsNumber, IsString } from 'class-validator';
 
 export class UserDto {
   @IsNumber()
@@ -22,4 +22,21 @@ export class UserDto {
     example: 'example@email.com',
   })
   email: string;
+
+  @ApiHideProperty()
+  password: string;
+
+  @IsDate()
+  @ApiProperty({
+    description: 'Data de criação do usuário',
+    example: '2021-07-01T00:00:00.000Z',
+  })
+  createdAt: Date;
+
+  @IsDate()
+  @ApiProperty({
+    description: 'Data de atualização do usuário',
+    example: '2021-07-01T00:00:00.000Z',
+  })
+  updatedAt: Date;
 }

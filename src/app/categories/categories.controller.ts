@@ -2,25 +2,29 @@ import {
   Controller,
   Get,
   Post,
+  Put,
+  Delete,
   Body,
   Param,
-  Delete,
   UsePipes,
   ValidationPipe,
-  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CategoryDto } from './dto/category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { VideoDto } from '../videos/dtos/video.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get()
   @ApiResponse({
     status: 200,
@@ -35,6 +39,8 @@ export class CategoriesController {
     return await this.categoriesService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   @ApiResponse({
     status: 200,
@@ -49,6 +55,8 @@ export class CategoriesController {
     return this.categoriesService.findById(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':category/videos')
   @ApiResponse({
     status: 200,
@@ -60,6 +68,8 @@ export class CategoriesController {
     return await this.categoriesService.findVideosByCategory(+category);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateCategoryDto })
   @ApiResponse({
@@ -73,6 +83,8 @@ export class CategoriesController {
     return await this.categoriesService.create(data);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Put(':id')
   @ApiBody({ type: UpdateCategoryDto })
   @ApiResponse({
@@ -94,6 +106,8 @@ export class CategoriesController {
     return { message: `A categoria #${id} foi atualizada`, category };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiResponse({
     status: 200,

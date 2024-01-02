@@ -48,9 +48,6 @@ export class UsersRepository {
       return null;
     }
 
-    // remove a senha do usuário antes de retornar
-    delete user.password;
-
     return user;
   }
 

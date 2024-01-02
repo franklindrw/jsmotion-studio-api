@@ -9,17 +9,27 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
 import { VideoDto } from './dtos/video.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('videos')
 @Controller('videos')
 export class VideosController {
   constructor(private readonly videoService: VideoService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get()
   @ApiQuery({ name: 'search', required: false })
   @ApiResponse({
@@ -37,6 +47,8 @@ export class VideosController {
     return videos;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('/:id')
   @ApiResponse({
     status: 200,
@@ -48,6 +60,8 @@ export class VideosController {
     return await this.videoService.getVideoById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateVideoDto })
   @ApiResponse({
@@ -61,6 +75,8 @@ export class VideosController {
     return await this.videoService.createVideo(newVideoData);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Put('/:id')
   @ApiBody({ type: CreateVideoDto })
   @ApiResponse({
@@ -78,6 +94,8 @@ export class VideosController {
     return await this.videoService.updateVideo(id, videoData);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete('/:id')
   @ApiResponse({
     status: 200,

@@ -56,6 +56,9 @@ export class UsersService {
       throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
     }
 
+    // remove a senha do usuário antes de retornar
+    delete user.password;
+
     return user;
   }
 

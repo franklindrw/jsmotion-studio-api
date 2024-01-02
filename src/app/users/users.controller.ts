@@ -9,12 +9,20 @@ import {
   Query,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserDto } from './dto/user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -35,6 +43,8 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get()
   @ApiQuery({ name: 'email', required: false })
   @ApiResponse({
@@ -52,6 +62,8 @@ export class UsersController {
     return await this.usersService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   @ApiResponse({
     status: 200,
@@ -64,6 +76,8 @@ export class UsersController {
     return await this.usersService.findOne(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Put(':id')
   @ApiBody({ type: UpdateUserDto, required: false })
   @ApiResponse({
@@ -82,6 +96,8 @@ export class UsersController {
     return await this.usersService.update(+id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiResponse({
     status: 200,
