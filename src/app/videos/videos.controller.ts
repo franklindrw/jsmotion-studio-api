@@ -22,6 +22,8 @@ import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoService } from './videos.service';
 import { VideoDto } from './dtos/video.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiPaginatedResponse } from 'src/decorators/paginated.decorator';
+import { PaginatedOutputDto } from './dtos/paginated-video.dto';
 
 @ApiTags('videos')
 @Controller('videos')
@@ -31,19 +33,30 @@ export class VideosController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
+  @ApiPaginatedResponse(VideoDto)
   @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
   @ApiResponse({
     status: 200,
     description: 'Retornou a lista de vídeos com sucesso.',
     type: [VideoDto],
   })
   @ApiResponse({ status: 404, description: 'Não há vídeos cadastrados.' })
-  async getVideos(@Query('search') search?: string): Promise<VideoDto[]> {
+  async getVideos(
+    @Query('search') search?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ): Promise<PaginatedOutputDto<VideoDto[]>> {
     if (search) {
-      const videos = await this.videoService.getVideosByTitle(search);
+      const videos = await this.videoService.getVideosByTitle(
+        search,
+        page,
+        limit,
+      );
       return videos;
     }
-    const videos = await this.videoService.getVideos();
+    const videos = await this.videoService.getVideos(page, limit);
     return videos;
   }
 

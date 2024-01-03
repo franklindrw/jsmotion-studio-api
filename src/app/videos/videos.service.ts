@@ -2,23 +2,31 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateVideoDto } from './dtos/create-video.dto';
 import { VideoDto } from './dtos/video.dto';
 import { VideoRepository } from './videos.repository';
+import { PaginatedOutputDto } from './dtos/paginated-video.dto';
 
 @Injectable()
 export class VideoService {
   constructor(private readonly videoRepo: VideoRepository) {}
 
-  async getVideos(): Promise<VideoDto[]> {
-    return await this.videoRepo.findAll();
+  async getVideos(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedOutputDto<VideoDto[]>> {
+    return await this.videoRepo.findAll(page, limit);
   }
 
   async getVideosFree() {
     return await this.videoRepo.findAllFree();
   }
 
-  async getVideosByTitle(title: string): Promise<VideoDto[]> {
-    const videos = await this.videoRepo.findByTitle(title);
+  async getVideosByTitle(
+    title: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedOutputDto<VideoDto[]>> {
+    const videos = await this.videoRepo.findByTitle(title, page, limit);
 
-    if (!videos || !videos.length) {
+    if (!videos.data || !videos.data.length) {
       throw new HttpException(
         'Não há vídeos cadastrados',
         HttpStatus.NOT_FOUND,
